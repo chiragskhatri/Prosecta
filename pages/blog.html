@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <!-- basic -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- mobile metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <title>Prosecta Blog</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div><a href="../index.html"><img src="../images/logo.png" width="140px"></a></div>
+  <!-- Overlay (click to close) -->
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <!-- Hamburger Icon -->
+  <div class="menu-toggle" id="menu-toggle">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <!-- Navigation Links -->
+  <ul class="nav-links" id="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../index.html#about">About Us</a></li>
+    <li><a href="../index.html#what-we-do">What We Do</a></li>
+    <li><a href="../index.html#impact">Impact</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="../pages/blog.html#contact">Contact</a></li>
+    <!--<li><a href="pages/get-involved.html" class="cta-link">Get Involved</a></li>-->
+  </ul>
+  
+</nav>
+
+<main class="inner-content">
+  <header class="hero">
+    <h1>Our Latest <span style="color: #FFD700; font-family: cursive; ">Insights</span></h1>
+    <p style="font-style: italic;">Insights and updates on our journey towards sustainable waste management.</p>
+  </header>
+
+<section class="blog-list" id="blog" style="min-height: 100vh;">
+
+    <div id="blog-container"></div>
+  
+   <!-- <div class="blog-card" data-aos="fade-up">
+      <img src="../images/top-banner.jpg" alt="Transforming Waste" class="blog-thumb" />
+      <div class="blog-info">
+        <h2>Transforming Waste into Value</h2>
+        <p>We believe biowaste is a beginning, not the end. Here's how we create value from what others discard.</p>
+        <a href="blog-post-1.html" class="read-more">Read More →</a>
+      </div>
+    </div>
+
+    <div class="blog-card" data-aos="fade-up" data-aos-delay="100">
+      <img src="../images/RotToRise.jpg" alt="Compost Technology" class="blog-thumb" />
+      <div class="blog-info">
+        <h2>Next-Gen Compost Tech</h2>
+        <p>Discover how Prosecta is implementing high-efficiency composting units for decentralized rural waste processing.</p>
+        <a href="blog-post-2.html" class="read-more">Read More →</a>
+      </div>
+    </div>
+
+    <div class="blog-card" data-aos="fade-up" data-aos-delay="100">
+      <img src="../images/RotToRise.jpg" alt="Compost Technology" class="blog-thumb" />
+      <div class="blog-info">
+        <h2>Next-Gen Compost Tech</h2>
+        <p>Discover how Prosecta is implementing high-efficiency composting units for decentralized rural waste processing.</p>
+        <a href="blog-post-2.html" class="read-more">Read More →</a>
+      </div>
+    </div> -->
+
+</section>
+
+</main>
+  
+<footer class="footer">
+  <div class="footer-container">
+    <!--<div>
+      <h3>ProSecta</h3>
+      <p>Zeroing Emissions. Securing Nutrition.</p>
+    </div>-->
+    <div>
+      <h3 id="contact" style="color: #FFD700">Contact</h3>
+      <p>Email: <a href="mailto:hello@prosecta.org">hello@prosecta.org</p></a>
+      <p>Phone: <a href="tel:918766354184">+91 87663 54184</p></a>
+      <div class="social-icons">
+        <!--<a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-x-twitter"></i></a>-->
+        <a href="https://www.linkedin.com/company/agriora-innovations-llp/"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.instagram.com/_prosecta?utm_source=qr&igsh=MWx1eTRlMGg2MnJhOA=="><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/918766354184" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="copyright">
+    <p>&copy; <span id="year"></span> Prosecta. All rights reserved.</p>
+</div>
+
+
+  <script src="../js/script.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

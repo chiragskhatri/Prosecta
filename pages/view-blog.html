@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <!-- basic -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- mobile metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <title>View Blog</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div><a href="../index.html"><img src="../images/logo.png" width="140px"></a></div>
+  <!-- Overlay (click to close) -->
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <!-- Hamburger Icon -->
+  <div class="menu-toggle" id="menu-toggle">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <!-- Navigation Links -->
+  <ul class="nav-links" id="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../index.html#about">About Us</a></li>
+    <li><a href="../index.html#what-we-do">What We Do</a></li>
+    <li><a href="../index.html#impact">Impact</a></li>
+    <li><a href="../pages/blog.html">Blog</a></li>
+    <li><a href="../index.html#contact">Contact</a></li>
+    <!--<li><a href="pages/get-involved.html" class="cta-link">Get Involved</a></li>-->
+  </ul>
+  
+</nav>
+
+
+
+<main style="min-height: 100vh;">
+  <div id="blog"></div>
+</main>
+
+<!--<main class="blog-page">
+  
+    <div class="blog-header">
+      <img src="../images/top-banner.jpg" alt="Blog Hero" class="blog-hero-img" />
+    </div>
+
+    <div class="blog-content" data-aos="fade-up">
+      <h1>Transforming Waste into Value</h1>
+      <p><em>Published on July 2025</em></p>
+      <p>
+        At Prosecta, our journey starts where others see an end — at wet waste. But to us, it's the beginning of sustainable solutions.
+        We see organic waste as an opportunity to create compost, livestock feed, and restore fertility to the soil.
+      </p>
+      <p>
+        By valorizing waste and optimizing nature’s circular flow, we not only reduce landfill load but also generate value across agriculture and the environment.
+      </p>
+      <p>
+        Our approach combines science and community. We collaborate with villages, agri-businesses, and researchers to rethink how India deals with biowaste.
+      </p>
+      <p>
+        Stay tuned to this blog for updates on composting tech, policy changes, field stories, and scalable models for waste transformation.
+      </p>
+    </div>
+
+</main> -->
+
+
+<footer class="footer">
+  <div class="footer-container">
+    <!--<div>
+      <h3>ProSecta</h3>
+      <p>Zeroing Emissions. Securing Nutrition.</p>
+    </div>-->
+    <div>
+      <h3 id="contact" style="color: #FFD700">Contact</h3>
+      <p>Email: <a href="mailto:hello@prosecta.org">hello@prosecta.org</p></a>
+      <p>Phone: <a href="tel:918766354184">+91 87663 54184</p></a>
+      <div class="social-icons">
+        <!--<a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-x-twitter"></i></a>-->
+        <a href="https://www.linkedin.com/company/agriora-innovations-llp/"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.instagram.com/_prosecta?utm_source=qr&igsh=MWx1eTRlMGg2MnJhOA=="><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/918766354184" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="copyright">
+    <p>&copy; <span id="year"></span> Prosecta. All rights reserved.</p>
+</div>
+
+
+  <script src="../js/script.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
