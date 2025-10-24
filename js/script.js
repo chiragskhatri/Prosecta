@@ -33,6 +33,20 @@ window.addEventListener('DOMContentLoaded', () => {
       isOpen ? closeMenu() : openMenu();
     });
   }
+
+  // Prefetch full posts for top N items (non-blocking)
+  const prefetchTopPosts = (postsArray) => {
+    if (!Array.isArray(postsArray)) return;
+    postsArray.forEach(p => {
+      if (!p || !p.ID) return;
+      const key = `post_${p.ID}`;
+      // if already cached, skip
+      if (cacheGet(key)) return;
+      // fetch in background and cache
+      fetchAndCache(`${APP_URL}?id=${encodeURIComponent(p.ID)}`, key, 1000*60*10, 15000)
+        .catch(()=>{});
+    });
+  };
   // close when clicking outside or on overlay
   document.addEventListener("click", (e) => {
     if (!navLinks || !toggleBtn) return;
@@ -135,6 +149,35 @@ window.addEventListener('DOMContentLoaded', () => {
       });
   };
 
+  // fetch-and-cache: always does a network fetch and updates cache
+  const fetchAndCache = (url, cacheKey = null, ttl = 1000*60*5, timeoutMs = 15000) => {
+    const controller = new AbortController();
+    const idTimeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    return fetch(url, {signal: controller.signal})
+      .then(res => {
+        clearTimeout(idTimeout);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(json => {
+        if (cacheKey) cacheSet(cacheKey, json, ttl);
+        return json;
+      });
+  };
+
+  // stale-while-revalidate: return cached value immediately if present, but refresh in background
+  const fetchSWR = (url, cacheKey = null, ttl = 1000*60*5, timeoutMs = 15000) => {
+    const cached = cacheKey ? cacheGet(cacheKey) : null;
+    if (cached) {
+      // kick off background refresh but do not wait
+      fetchAndCache(url, cacheKey, ttl, timeoutMs).catch(() => {});
+      return Promise.resolve(cached);
+    }
+    // no cache -> fetch and cache (wait)
+    return fetchAndCache(url, cacheKey, ttl, timeoutMs);
+  };
+
   if (id) {
     // single blog view
     const container = document.getElementById("blog");
@@ -142,35 +185,54 @@ window.addEventListener('DOMContentLoaded', () => {
       console.error("Error: 'blog' div not found in view-blog.html");
       return;
     }
-
+    // show skeleton while we try to render cached or fresh
     showSkeleton(container, 'post');
 
-    fetchWithCache(`${APP_URL}?id=${encodeURIComponent(id)}`, `post_${id}`, 1000*60*10, 15000)
-      .then(blog => {
-        if (!blog || blog.error || !blog.ID) {
-          container.innerHTML = generateErrorHtml("404", "Blog post not found");
-          return;
-        }
-        document.title = blog.Title || 'Blog';
-        container.innerHTML = `
-          <div class="hero">
-            <h1 style="color:#FFD700;font-family:cursive">${blog.Title}</h1>
-            <p style="font-style:italic">${blog.Summary || ''}</p>
+    // helper to render post into container
+    const renderPost = (blog) => {
+      if (!blog || blog.error || !blog.ID) {
+        container.innerHTML = generateErrorHtml("404", "Blog post not found");
+        return;
+      }
+      document.title = blog.Title || 'Blog';
+      container.innerHTML = `
+        <div class="hero">
+          <h1 style="color:#FFD700;font-family:cursive">${blog.Title}</h1>
+          <p style="font-style:italic">${blog.Summary || ''}</p>
+        </div>
+        <div class="blog-page">
+          <div class="blog-header">
+            <img src="${blog.ImageLink || ''}" alt="Blog Thumbnail" loading="lazy" style="max-width:100%;border-radius:8px" />
           </div>
-          <div class="blog-page">
-            <div class="blog-header">
-              <img src="${blog.ImageLink || ''}" alt="Blog Thumbnail" loading="lazy" style="max-width:100%;border-radius:8px" />
-            </div>
-            <div class="blog-content">
-              ${blog.Content || ''}
-            </div>
+          <div class="blog-content">
+            ${blog.Content || ''}
           </div>
-        `;
-      })
-      .catch(err => {
-        console.error("Blog fetch error:", err);
-        container.innerHTML = generateErrorHtml("500", "Error loading blog post");
-      });
+        </div>
+      `;
+    };
+
+    // try stale-while-revalidate: render cache immediately if present, then replace when fresh arrives
+    const postCacheKey = `post_${id}`;
+    const cachedPost = cacheGet(postCacheKey);
+    if (cachedPost) {
+      try { renderPost(cachedPost); } catch(e){/* ignore render errors */}
+      // refresh in background and replace if different
+      fetchAndCache(`${APP_URL}?id=${encodeURIComponent(id)}`, postCacheKey, 1000*60*10, 15000)
+        .then(fresh => {
+          try {
+            // replace only if different (simple string compare)
+            if (JSON.stringify(fresh) !== JSON.stringify(cachedPost)) renderPost(fresh);
+          } catch (e) { /* ignore */ }
+        }).catch(err => { console.debug('Post background refresh failed', err); });
+    } else {
+      // no cache -> fetch and render
+      fetchAndCache(`${APP_URL}?id=${encodeURIComponent(id)}`, postCacheKey, 1000*60*10, 15000)
+        .then(blog => renderPost(blog))
+        .catch(err => {
+          console.error("Blog fetch error:", err);
+          container.innerHTML = generateErrorHtml("500", "Error loading blog post");
+        });
+    }
 
   } else {
     // list of blog posts
@@ -180,37 +242,62 @@ window.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    showSkeleton(container, 'list');
-
-    fetchWithCache(APP_URL, 'all_posts_summary', 1000*60*5, 15000)
-      .then(data => {
-        if (!Array.isArray(data) || data.length === 0) {
-          container.innerHTML = generateErrorHtml("404", "No blog posts found");
+    // list of blog posts: use stale-while-revalidate to render cached summaries immediately
+    const renderList = (data) => {
+      // data to show latest->oldest on the site
+      if (!Array.isArray(data) || data.length === 0) {
+        container.innerHTML = generateErrorHtml("404", "No blog posts found");
+        return;
+      }
+      const reversed = data.slice().reverse(); // newest first
+      let htmlContent = "";
+      reversed.forEach(post => {
+        if (!post.ID || !post.Title || !post.Summary || !post.ImageLink) {
+          console.warn("Skipping malformed blog post:", post);
           return;
         }
-
-        let htmlContent = "";
-        data.forEach(post => {
-          if (!post.ID || !post.Title || !post.Summary || !post.ImageLink) {
-            console.warn("Skipping malformed blog post:", post);
-            return;
-          }
-          htmlContent += `
-            <div class="blog-card" data-aos="fade-up" data-aos-delay="100">
-              <img src="${post.ImageLink}" alt="Blog Thumbnail" class="blog-thumb" loading="lazy">
-              <div class="blog-info">
-                <h2>${post.Title}</h2>
-                <p>${post.Summary}</p>
-                <a href="view-blog.html?id=${post.ID}" class="read-more">Read More →</a>
-              </div>
+        htmlContent += `
+          <div class="blog-card" data-aos="fade-up" data-aos-delay="100">
+            <img src="${post.ImageLink}" alt="Blog Thumbnail" class="blog-thumb" loading="lazy">
+            <div class="blog-info">
+              <h2>${post.Title}</h2>
+              <p>${post.Summary}</p>
+              <a href="view-blog.html?id=${post.ID}" class="read-more">Read More →</a>
             </div>
-          `;
-        });
-        container.innerHTML = htmlContent;
-      })
-      .catch(err => {
-        console.error("Summary fetch error:", err);
-        container.innerHTML = generateErrorHtml("500", "Error loading blog summaries");
+          </div>
+        `;
       });
+      container.innerHTML = htmlContent;
+      return reversed; 
+    };
+
+    showSkeleton(container, 'list');
+
+    const summaryCacheKey = 'all_posts_summary';
+    const cachedSummary = cacheGet(summaryCacheKey);
+    if (cachedSummary) {
+      try { renderList(cachedSummary); } catch(e){}
+      // background refresh and update if changed
+      fetchAndCache(APP_URL, summaryCacheKey, 1000*60*5, 15000)
+        .then(fresh => {
+          try {
+            if (JSON.stringify(fresh) !== JSON.stringify(cachedSummary)) renderList(fresh);
+            // prefetch top 2 newest posts (fresh is oldest->latest, so reverse then slice)
+            if (Array.isArray(fresh) && fresh.length) prefetchTopPosts(fresh.slice().reverse().slice(0,3));
+          } catch(e){}
+        })
+        .catch(err => { console.debug('Background summary refresh failed', err); });
+    } else {
+      // no cache -> fetch then render
+      fetchAndCache(APP_URL, summaryCacheKey, 1000*60*5, 15000)
+        .then(data => {
+          const newest = renderList(data) || data.slice().reverse();
+          if (Array.isArray(newest) && newest.length) prefetchTopPosts(newest.slice(0,3));
+        })
+        .catch(err => {
+          console.error("Summary fetch error:", err);
+          container.innerHTML = generateErrorHtml("500", "Error loading blog summaries");
+        });
+    }
   }
 });
