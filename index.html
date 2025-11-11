@@ -42,12 +42,75 @@
 
 
 <main class="inner-content">
+  <header class="hero-banner" id="hero-banner" aria-label="Prosecta interactive hero">
+    <!-- background layer (moved by JS for parallax) -->
+    <div class="hero-banner__bg" style="background-image: url('images/hero-background.jpg')" aria-hidden="true"></div>
+    <div class="hero-banner__overlay" aria-hidden="true"></div>
+    <div class="hero-banner__content">
+      <h1 class="hero-banner__title">Turning Wet Waste into <span class="hero-banner__highlight">Gold</span></h1>
+      <p class="hero-banner__lead">We manage biowaste sustainably to create compost, feed and circular value.</p>
+      <div class="hero-banner__actions">
+        <a class="btn-primary" href="#what-we-do">Our Solutions</a>
+        <a class="btn-primary" href="pages/blog.html">Read the Blog</a>
+      </div>
+    </div>
+    <!-- decorative SVG wave that cuts the bottom of the hero -->
+    <svg class="hero-banner__wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,40 C220,120 440,0 720,40 C1000,80 1220,0 1440,40 L1440,120 L0,120 Z" fill="#f9fdf8"></path>
+    </svg>
 
-  <header class="hero">
-    <h1>Turning Wet Waste into <span style="color: #FFD700; font-family: cursive; ">Gold </span></h1>
-    <p>We manage waste sustainably to create compost and feed.</p>
-    <a href="#what-we-do" class="cta">Explore Our Solutions</a>
+    <!-- small inline script to drive pointer/touch parallax on background -->
+    <script>
+      (function(){
+        const banner = document.getElementById('hero-banner');
+        if(!banner) return;
+        const bg = banner.querySelector('.hero-banner__bg');
+        let pointerX = 0, pointerY = 0;
+        let raf = null;
+
+        function onPointer(e){
+          const rect = banner.getBoundingClientRect();
+          const x = (e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : rect.width/2));
+          const y = (e.clientY !== undefined ? e.clientY : (e.touches ? e.touches[0].clientY : rect.height/2));
+          // normalized -0.5 .. 0.5
+          pointerX = (x - rect.left) / rect.width - 0.5;
+          pointerY = (y - rect.top) / rect.height - 0.5;
+          if(!raf) raf = requestAnimationFrame(update);
+        }
+
+        function update(){
+          raf = null;
+          // small translate & scale for parallax effect
+          const tx = pointerX * 12; // px
+          const ty = pointerY * 8; // px
+          const scale = 1 + Math.abs(pointerX) * 0.02 + Math.abs(pointerY) * 0.02;
+          bg.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${scale})`;
+          bg.style.willChange = 'transform';
+        }
+
+        // Reset to neutral when pointer leaves
+        function onLeave(){
+          pointerX = 0; pointerY = 0;
+          if(!raf) raf = requestAnimationFrame(()=>{ bg.style.transform='translate3d(0,0,0) scale(1)'; raf=null; });
+        }
+
+        // pointer and touch events
+        banner.addEventListener('pointermove', onPointer, {passive:true});
+        banner.addEventListener('pointerleave', onLeave);
+        banner.addEventListener('touchmove', onPointer, {passive:true});
+        banner.addEventListener('touchend', onLeave);
+
+        // reduce motion preference: disable transforms
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if(mq.matches){
+          bg.style.transform = 'none';
+          banner.removeEventListener('pointermove', onPointer);
+          banner.removeEventListener('touchmove', onPointer);
+        }
+      })();
+    </script>
   </header>
+  
 
 <section class="image-text-section">
   <div class="image-box">
@@ -64,7 +127,7 @@
 <section class="about-section" id="about">
   <div class="about-section-text">
     <h2 class="typewriter-container" style="font-style: italic;">About Us</h2>
-    <p>At Prosecta, we believe waste is a valuable resource that should never go untreated. We specialize in transforming biowaste into sustainable solutions, such as compost and feed, that meet the growing demand for food and feed while reducing landfill waste. By applying circular agriculture principles, we optimize nature’s potential to create environmentally friendly solutions. Our approach not only enhances agricultural productivity but also supports a more sustainable future by providing waste management, resource recovery, and sustainable farming solutions to businesses and communities alike.</p>
+    <p>At Prosecta, we believe waste is a valuable resource that should never go untreated. We specialize in transforming biowaste into compost and feed, that meet the growing demand for food and feed while reducing landfill waste. By applying circular agriculture principles, we optimize nature’s potential to create environmentally friendly solutions. Our approach not only enhances agricultural productivity but also supports a more sustainable future by providing waste management, resource recovery, and sustainable farming solutions to businesses and communities alike.</p>
   </div>
   <div class="about-image-box">
     <img src="images/RotToRise.jpg" alt="About Prosecta" />
@@ -130,10 +193,18 @@
   
 <footer class="footer">
   <div class="footer-container">
-    <!--<div>
-      <h3>ProSecta</h3>
-      <p>Zeroing Emissions. Securing Nutrition.</p>
-    </div>-->
+    <div>
+      <!--<h3> <a href="index.html">ProSecta</a></h3>-->
+      <p><a href="index.html"><img src="images/logo.png" width="140px"></a></p>
+      <p>Zeroing Emissions. Securing Nutrition.</p> 
+    </div>
+    <div>
+      <h3 style="color: #FFD700">Explore</h3>
+      <p><a href="pages/blog.html" target="_blank">Blogs </a></p>
+      <p><a href="index.html#about">About Us</a></p>
+      <p><a href="index.html#what-we-do">What We Do</a></p>
+      <p><a href="index.html#impact">Impact</a></p>
+    </div>
     <div>
       <h3 id="contact" style="color: #FFD700">Contact</h3>
       <p>Email: <a href="mailto:hello@prosecta.org">hello@prosecta.org</p></a>

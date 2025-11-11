@@ -201,27 +201,27 @@ window.addEventListener('DOMContentLoaded', () => {
           <p style="font-style:italic">${blog.Summary || ''}</p>
         </div>
         <div class="blog-page">
-          <div class="blog-header">
-            <img src="${blog.ImageLink || ''}" alt="Blog Thumbnail" loading="lazy" style="max-width:100%;border-radius:8px" />
+          <div class="blog-header" style="display:flex;justify-content:center;align-items:center;min-height:0vh;">
+        <img src="${blog.ImageLink || ''}" alt="Blog Thumbnail" loading="lazy" style="max-width:100%;border-radius:8px;" />
           </div>
           <div class="blog-content">
-            ${blog.Content || ''}
+        ${blog.Content || ''}
           </div>
         </div>
       `;
-    };
+        };
 
-    // try stale-while-revalidate: render cache immediately if present, then replace when fresh arrives
-    const postCacheKey = `post_${id}`;
-    const cachedPost = cacheGet(postCacheKey);
-    if (cachedPost) {
+        // try stale-while-revalidate: render cache immediately if present, then replace when fresh arrives
+        const postCacheKey = `post_${id}`;
+        const cachedPost = cacheGet(postCacheKey);
+        if (cachedPost) {
       try { renderPost(cachedPost); } catch(e){/* ignore render errors */}
       // refresh in background and replace if different
       fetchAndCache(`${APP_URL}?id=${encodeURIComponent(id)}`, postCacheKey, 1000*60*10, 15000)
         .then(fresh => {
           try {
-            // replace only if different (simple string compare)
-            if (JSON.stringify(fresh) !== JSON.stringify(cachedPost)) renderPost(fresh);
+        // replace only if different (simple string compare)
+        if (JSON.stringify(fresh) !== JSON.stringify(cachedPost)) renderPost(fresh);
           } catch (e) { /* ignore */ }
         }).catch(err => { console.debug('Post background refresh failed', err); });
     } else {
