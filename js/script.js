@@ -65,7 +65,7 @@ window.addEventListener('DOMContentLoaded', () => {
       <h1 style="font-size:6rem;margin:0;color:#e74c3c">${errorCode}</h1>
       <h2 style="font-size:1.8rem;margin-top:10px;color:#555">Oops! ${message}</h2>
       <p style="color:#777;margin-bottom:30px">It seems like something went wrong. Please try again later.</p>
-      <a href="../blog.html" style="display:inline-block;padding:12px 25px;background:#3498db;color:#fff;text-decoration:none;border-radius:50px;font-weight:bold;">Go Home</a>
+      <a href="../index.html" style="display:inline-block;padding:12px 25px;background:#3498db;color:#fff;text-decoration:none;border-radius:50px;font-weight:bold;">Go Home</a>
     </div>`;
 
   // Skeletons

@@ -147,36 +147,7 @@ a { text-decoration: none; }
   display: block;
   max-height: 400px;  
 }
-/*
-.navbar {
-  background: #e6f4ea;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 40px;
-}
-.navbar .header {
-  font-weight: 700;
-  font-size: 1.6rem;
-  color: #2c7a51;
-}
-.navbar .nav-links {
-  list-style: none;
-  display: flex;
-  gap: 30px;
-}
-.navbar .nav-links li a {
-  color: #2e3d29;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-.navbar .nav-links li a:hover {
-  color: #2c7a51;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-}
-*/
 
-/* Navbar */
 .navbar {
   background: #e6f4ea;
   padding: 20px 20px;
@@ -359,7 +330,7 @@ a { text-decoration: none; }
 .about-section {
   color: white;
   padding: 20px 20px;
-  background: #234432;
+  background: #3A5A40;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -370,6 +341,7 @@ a { text-decoration: none; }
   flex: 1 1 300px;
   max-width: fit-content;
   text-align: justify;
+  line-height: 6mm;
 }
 
 .about-image-box {
@@ -513,7 +485,7 @@ a { text-decoration: none; }
 }
 
 .footer {
-  background: #22303D;
+  background: #333333;
   color: white;
 }
 .footer a {
@@ -525,7 +497,7 @@ a { text-decoration: none; }
 .footer-container {
   display: flex;
   justify-content: space-between;
-  padding: 20px 40px;
+  padding: 20px 20px;
   text-align: left;
   flex-wrap: wrap; /* allow columns to wrap instead of overflowing */
   align-items: flex-start;
@@ -534,7 +506,7 @@ a { text-decoration: none; }
   overflow-wrap: break-word;
   word-break: break-word;
   hyphens: auto;
-  line-height: 1.4;
+  line-height: 1;
 }
 
 
@@ -546,7 +518,7 @@ a { text-decoration: none; }
     align-items: center;
     text-align: center;
     gap: 12px;
-    padding: 16px;
+    padding: 20px;
   }
   .footer-container > * {
     width: 100%;
@@ -759,19 +731,22 @@ form button:hover {
 }
 
 .blog-content h1 {
+  max-width: 1050px;
+  align-self: center;
   font-size: 2rem;
   color: #2c7a51;
-  margin-bottom: 10px;
 }
 
 .blog-content p {
+  max-width: 1050px;
+  align-self: center;
   line-height: 1.5;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   color: #333;
-  margin-bottom: 25px;
 }
 
 .NotFound {
   align-self: center;
   
 }
+
