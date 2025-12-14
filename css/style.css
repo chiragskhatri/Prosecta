@@ -506,7 +506,7 @@ a { text-decoration: none; }
   overflow-wrap: break-word;
   word-break: break-word;
   hyphens: auto;
-  line-height: 1;
+  line-height: 3mm;
 }
 
 
