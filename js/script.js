@@ -60,6 +60,24 @@ window.addEventListener('DOMContentLoaded', () => {
   const APP_URL = "https://script.google.com/macros/s/AKfycbx9CiJ7cSpWfu9vke6ZAuVJ0KpZtiamhfSrERy8bvPPJYfIQmZAxJ35WMhpZk4Jsw6_9A/exec";
   const id = new URLSearchParams(window.location.search).get("id");
 
+  // Convert Google Drive sharing URLs to direct embeddable image URLs
+  const convertGDriveUrl = (url) => {
+    if (!url) return '';
+    let fileId = null;
+    // Pattern: /file/d/FILE_ID/
+    let match = url.match(/\/file\/d\/([^/]+)/);
+    if (match) fileId = match[1];
+    // Pattern: ?id=FILE_ID or &id=FILE_ID
+    if (!fileId) {
+      match = url.match(/[?&]id=([^&]+)/);
+      if (match) fileId = match[1];
+    }
+    // If we extracted a file ID, return a direct thumbnail URL
+    if (fileId) return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+    // Not a Google Drive URL — return as-is
+    return url;
+  };
+
   const generateErrorHtml = (errorCode, message) => `
     <div style="max-width:fit-content;padding:40px;background:#e2f1e9;border-radius:15px;margin:100px auto;text-align:center;font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;color:#333;">
       <h1 style="font-size:6rem;margin:0;color:#e74c3c">${errorCode}</h1>
@@ -202,7 +220,7 @@ window.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="blog-page">
           <div class="blog-header" style="display:flex;justify-content:center;align-items:center;min-height:0vh;">
-        <img src="${blog.ImageLink || ''}" alt="Blog Thumbnail" loading="lazy" style="max-width:100%;border-radius:8px;" />
+        <img src="${convertGDriveUrl(blog.ImageLink)}" alt="Blog Thumbnail" loading="lazy" style="max-width:100%;border-radius:8px;" />
           </div>
           <div class="blog-content">
         ${blog.Content || ''}
@@ -258,7 +276,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         htmlContent += `
           <div class="blog-card" data-aos="fade-up" data-aos-delay="100">
-            <img src="${post.ImageLink}" alt="Blog Thumbnail" class="blog-thumb" loading="lazy">
+            <img src="${convertGDriveUrl(post.ImageLink)}" alt="Blog Thumbnail" class="blog-thumb" loading="lazy">
             <div class="blog-info">
               <h2>${post.Title}</h2>
               <p>${post.Summary}</p>
